@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>План смены — Неделя вожатой</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sun: #FFD93D;
+    --coral: #FF6B6B;
+    --mint: #6BCB77;
+    --sky: #4ECDC4;
+    --violet: #C77DFF;
+    --navy: #1a1a2e;
+    --card: #fff;
+    --bg: #f0f4ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 0 0 60px;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,107,107,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(78,205,196,0.08) 0%, transparent 50%);
+  }
+
+  header {
+    background: var(--navy);
+    color: white;
+    text-align: center;
+    padding: 36px 20px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 20px,
+      rgba(255,255,255,0.03) 20px,
+      rgba(255,255,255,0.03) 40px
+    );
+  }
+  header .emoji-row {
+    font-size: 2rem;
+    letter-spacing: 6px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  header h1 {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 700;
+    position: relative;
+    color: var(--sun);
+  }
+  header p {
+    font-size: 1rem;
+    opacity: 0.7;
+    margin-top: 6px;
+    position: relative;
+  }
+
+  .days-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: visible;
+    padding: 16px 20px;
+    scrollbar-width: none;
+    background: white;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  .days-nav::-webkit-scrollbar { display: none; }
+
+  .day-btn {
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50px;
+    padding: 8px 18px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #eee;
+    color: #666;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    appearance: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .day-btn.active {
+    color: white;
+    transform: scale(1.08);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  }
+  .day-btn[data-day="1"].active { background: var(--coral); }
+  .day-btn[data-day="2"].active { background: var(--sky); }
+  .day-btn[data-day="3"].active { background: var(--mint); }
+  .day-btn[data-day="4"].active { background: var(--violet); }
+  .day-btn[data-day="5"].active { background: var(--sun); color: #333; }
+  .day-btn[data-day="6"].active { background: var(--coral); }
+  .day-btn[data-day="7"].active { background: var(--navy); }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  .day-section { display: none; }
+  .day-section.active { display: block; animation: fadeIn 0.35s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .day-badge {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.1rem;
+    line-height: 1.1;
+    flex-shrink: 0;
+    color: white;
+  }
+  .day-badge small { font-size: 0.65rem; font-weight: 600; opacity: 0.85; }
+  .day-title h2 {
+    font-family: 'Caveat', cursive;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.1;
+  }
+  .day-title p { font-size: 0.85rem; color: #888; margin-top: 2px; }
+
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 36px;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, transparent, #ddd 5%, #ddd 95%, transparent);
+  }
+
+  .event {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .event-time {
+    flex-shrink: 0;
+    width: 72px;
+    text-align: right;
+    padding-top: 14px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #aaa;
+    position: relative;
+  }
+  .event-time::after {
+    content: '';
+    position: absolute;
+    right: -22px;
+    top: 20px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #ccc;
+    z-index: 1;
+  }
+
+  .event-card {
+    flex: 1;
+    background: white;
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border-left: 4px solid #ddd;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .event-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+  }
+  .event-card .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    opacity: 0.85;
+  }
+  .event-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .event-card p {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.5;
+  }
+  .event-card .indiv {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: #888;
+  }
+  .event-card .indiv::before { content: '👤 '; }
+
+  /* Games section */
+  .games-section {
+    margin-top: 28px;
+  }
+  .games-title {
+    font-family: 'Caveat', cursive;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .games-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .game-card {
+    background: white;
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border-top: 4px solid #ddd;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .game-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  }
+  .game-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .game-type-badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+  .game-type-badge.outdoor { background: #e8f5e9; color: #2e7d32; }
+  .game-type-badge.evening { background: #ede7f6; color: #6a1b9a; }
+  .game-type-badge.intel { background: #e3f2fd; color: #1565c0; }
+  .game-meta {
+    font-size: 0.75rem;
+    color: #bbb;
+    margin-left: auto;
+  }
+  .game-card h4 {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 5px;
+  }
+  .game-card p {
+    font-size: 0.82rem;
+    color: #666;
+    line-height: 1.5;
+  }
+  .game-card .game-rules {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: #fafafa;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    color: #888;
+    line-height: 1.5;
+  }
+  .game-card .game-rules::before { content: '📋 Правила: '; font-weight: 700; color: #aaa; }
+
+  [data-day="1"] .game-card { border-top-color: var(--coral); }
+  [data-day="2"] .game-card { border-top-color: var(--sky); }
+  [data-day="3"] .game-card { border-top-color: var(--mint); }
+  [data-day="4"] .game-card { border-top-color: var(--violet); }
+  [data-day="5"] .game-card { border-top-color: #f0a500; }
+  [data-day="6"] .game-card { border-top-color: #ff8e53; }
+  [data-day="7"] .game-card { border-top-color: var(--navy); }
+
+  /* Reserve button */
+  .reserve-btn { background: linear-gradient(135deg,#ff6b6b,#c77dff) !important; color: white !important; }
+  .reserve-btn.active { transform: scale(1.08); box-shadow: 0 4px 14px rgba(199,125,255,0.4) !important; }
+
+  /* Reserve section blocks */
+  .reserve-block { margin-bottom: 32px; }
+  .reserve-block-title {
+    font-family: 'Caveat', cursive;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px dashed #e0e0e0;
+  }
+  .reserve-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .reserve-grid-wide {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 500px) { .reserve-grid-wide { grid-template-columns: 1fr; } }
+
+  .reserve-card {
+    background: white;
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border-top: 4px solid #eee;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .reserve-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
+  .reserve-card-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .res-badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+  .res-meta { font-size: 0.72rem; color: #bbb; margin-left: auto; }
+  .reserve-card h4 {
+    font-size: 0.96rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 5px;
+  }
+  .reserve-card p { font-size: 0.82rem; color: #666; line-height: 1.5; }
+  .res-note {
+    margin-top: 8px;
+    padding: 7px 10px;
+    background: #fafafa;
+    border-radius: 8px;
+    font-size: 0.77rem;
+    color: #999;
+    line-height: 1.45;
+  }
+  .res-note::before { content: '💡 '; }
+
+  .reserve-card-mini {
+    border-radius: 12px;
+    padding: 11px 14px;
+    border-top: none !important;
+  }
+  .reserve-card-mini h4 { font-size: 0.88rem; margin-bottom: 4px; }
+  .reserve-card-mini p { font-size: 0.78rem; }
+
+  /* day colors */
+  [data-day="1"] .event-card { border-left-color: var(--coral); }
+  [data-day="1"] .event-time::after { border-color: var(--coral); }
+  [data-day="1"] .tag { background: #ffe5e5; color: var(--coral); }
+
+  [data-day="2"] .event-card { border-left-color: var(--sky); }
+  [data-day="2"] .event-time::after { border-color: var(--sky); }
+  [data-day="2"] .tag { background: #e0f8f7; color: #2a9d8f; }
+
+  [data-day="3"] .event-card { border-left-color: var(--mint); }
+  [data-day="3"] .event-time::after { border-color: var(--mint); }
+  [data-day="3"] .tag { background: #e3f7e5; color: #27ae60; }
+
+  [data-day="4"] .event-card { border-left-color: var(--violet); }
+  [data-day="4"] .event-time::after { border-color: var(--violet); }
+  [data-day="4"] .tag { background: #f3e8ff; color: #9b59b6; }
+
+  [data-day="5"] .event-card { border-left-color: #f0a500; }
+  [data-day="5"] .event-time::after { border-color: #f0a500; }
+  [data-day="5"] .tag { background: #fff8e1; color: #e67e00; }
+
+  [data-day="6"] .event-card { border-left-color: #ff8e53; }
+  [data-day="6"] .event-time::after { border-color: #ff8e53; }
+  [data-day="6"] .tag { background: #fff0eb; color: #e05a00; }
+
+  [data-day="7"] .event-card { border-left-color: var(--navy); }
+  [data-day="7"] .event-time::after { border-color: var(--navy); }
+  [data-day="7"] .tag { background: #e8eaf6; color: var(--navy); }
+
+  .tips-box {
+    background: linear-gradient(135deg, var(--navy) 0%, #2d3561 100%);
+    color: white;
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 24px;
+  }
+  .tips-box h4 {
+    font-family: 'Caveat', cursive;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--sun);
+  }
+  .tips-box ul { list-style: none; }
+  .tips-box li {
+    font-size: 0.85rem;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    opacity: 0.9;
+  }
+  .tips-box li:last-child { border: none; }
+  .tips-box li::before { content: '→ '; opacity: 0.5; }
+
+  /* Day summary / итог дня */
+  .day-summary {
+    margin-top: 24px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 20px;
+    padding: 20px 22px;
+    color: white;
+    border-left: 5px solid var(--sun);
+  }
+  .day-summary-title {
+    font-family: 'Caveat', cursive;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--sun);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .day-summary p {
+    font-size: 0.88rem;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.88);
+  }
+  .day-summary .summary-meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .summary-tag {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.85);
+  }
+  .summary-tag.good { background: rgba(107,203,119,0.25); color: #a8f0b0; }
+  .summary-tag.note { background: rgba(255,209,61,0.2); color: #ffd93d; }
+  .summary-tag.indiv { background: rgba(199,125,255,0.2); color: #dba8ff; }
+
+  /* Reserve section — category tabs */
+  .cat-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 0 14px;
+    scrollbar-width: none;
+    margin-bottom: 4px;
+  }
+  .cat-tabs::-webkit-scrollbar { display: none; }
+  .cat-btn {
+    flex-shrink: 0;
+    border: 2px solid #e0e0e0;
+    border-radius: 30px;
+    padding: 7px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.83rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: white;
+    color: #888;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    appearance: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .cat-btn.active {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+  }
+  .cat-panel { display: none; }
+  .cat-panel.active { display: block; }
+
+  /* Reserve cards */
+  .rg2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 580px) { .rg2 { grid-template-columns: 1fr; } }
+
+  .rc {
+    background: white;
+    border-radius: 16px;
+    padding: 15px 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    border-top: 4px solid #eee;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .rc:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
+  .rc-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .rc-time {
+    font-size: 0.7rem;
+    font-weight: 800;
+    background: #f0f0f0;
+    color: #666;
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+  .rc-who {
+    font-size: 0.7rem;
+    color: #aaa;
+    font-weight: 600;
+    margin-left: auto;
+  }
+  .rc-title {
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .rc-body {
+    font-size: 0.82rem;
+    color: #555;
+    line-height: 1.55;
+    margin-bottom: 8px;
+  }
+  .rc-tip {
+    font-size: 0.77rem;
+    color: #aaa;
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 7px 10px;
+    line-height: 1.45;
+  }
+  .rc-tip::before { content: '💡 '; }
+
+  /* Fast items */
+  .fast-list { display: flex; flex-direction: column; gap: 10px; }
+  .fast-item {
+    display: flex;
+    gap: 12px;
+    background: white;
+    border-radius: 14px;
+    padding: 13px 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    align-items: flex-start;
+  }
+  .fast-emoji { font-size: 1.6rem; flex-shrink: 0; line-height: 1; }
+  .fast-content { flex: 1; }
+  .fast-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 3px;
+  }
+  .fast-dur {
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: #f0f0f0;
+    color: #888;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 6px;
+  }
+  .fast-desc { font-size: 0.82rem; color: #666; line-height: 1.5; }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px 20px;
+    background: white;
+    border-bottom: 1px solid #eee;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: #666;
+    font-weight: 600;
+  }
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Generator button */
+  .gen-btn { background: linear-gradient(135deg,#4ecdc4,#1a1a2e) !important; color: white !important; }
+  .gen-btn.active { transform: scale(1.08); box-shadow: 0 4px 14px rgba(78,205,196,0.4) !important; }
+
+  /* Generator section */
+  #generator-section { }
+  .gen-header {
+    background: linear-gradient(135deg, #1a1a2e, #2d3561);
+    border-radius: 20px;
+    padding: 28px 24px;
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .gen-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255,255,255,0.02) 15px, rgba(255,255,255,0.02) 30px);
+  }
+  .gen-header h2 {
+    font-family: 'Caveat', cursive;
+    font-size: 2rem;
+    color: var(--sun);
+    position: relative;
+    margin-bottom: 6px;
+  }
+  .gen-header p { color: rgba(255,255,255,0.6); font-size: 0.88rem; position: relative; }
+
+  .gen-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .gen-filter {
+    border: 2px solid #e0e0e0;
+    border-radius: 30px;
+    padding: 7px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: white;
+    color: #888;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .gen-filter.active {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+  }
+
+  .gen-roll-btn {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #FF6B6B, #C77DFF);
+    color: white;
+    border: none;
+    border-radius: 18px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 900;
+    cursor: pointer;
+    margin-bottom: 24px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 6px 20px rgba(199,125,255,0.3);
+    letter-spacing: 0.3px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .gen-roll-btn:active { transform: scale(0.97); }
+
+  .gen-result {
+    display: none;
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border-top: 5px solid var(--coral);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .gen-result.visible { display: block; }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.9) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .gen-result-type {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #bbb;
+    margin-bottom: 8px;
+  }
+  .gen-result-emoji { font-size: 3rem; margin-bottom: 10px; display: block; }
+  .gen-result-title {
+    font-family: 'Caveat', cursive;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  .gen-result-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .gen-meta-pill {
+    background: #f0f0f0;
+    color: #666;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .gen-result-desc {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .gen-result-tip {
+    background: #f8f8f8;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: #888;
+    line-height: 1.5;
+  }
+  .gen-result-tip::before { content: '💡 '; }
+
+  .gen-reroll {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    background: #f0f0f0;
+    color: #555;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .gen-reroll:active { background: #e0e0e0; }
+
+  /* Mobile improvements */
+  @media (max-width: 480px) {
+    .container { padding: 16px 12px; }
+    .event-time { width: 54px; font-size: 0.75rem; }
+    .timeline::before { left: 27px; }
+    .event-time::after { right: -18px; }
+    .rg2 { grid-template-columns: 1fr; }
+    .cat-btn { font-size: 0.78rem; padding: 6px 12px; }
+    .day-btn { padding: 6px 12px; font-size: 0.78rem; }
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="emoji-row">⛺🌟🎯🎭🏕️</div>
+  <h1>План смены — Неделя вожатой</h1>
+  <p>Детский лагерь · Июнь 2026 · Отряд №3</p>
+</header>
+
+  <div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#FF6B6B"></div> Знакомство</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4ECDC4"></div> Спорт</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#6BCB77"></div> Творчество</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#C77DFF"></div> Интеллект</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#FFD93D"></div> Развлечение</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1a1a2e"></div> Закрытие</div>
+</div>
+<div class="legend" style="border-top:1px solid #eee; gap:14px;">
+  <div class="legend-item"><span style="background:#e8f5e9;color:#2e7d32;font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:20px;">🏃 АКТИВНАЯ</span></div>
+  <div class="legend-item"><span style="background:#ede7f6;color:#6a1b9a;font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:20px;">🌙 ВЕЧЕРНЯЯ</span></div>
+  <div class="legend-item"><span style="background:#e3f2fd;color:#1565c0;font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:20px;">🧠 ИНТЕЛЛЕКТ</span></div>
+  <div class="legend-item" style="font-size:0.75rem;color:#aaa;">← игры для 13–16 лет</div>
+</div>
+
+<div class="days-nav">
+  <button class="day-btn active" data-day="1">День 1<br><small>Пн</small></button>
+  <button class="day-btn" data-day="2">День 2<br><small>Вт</small></button>
+  <button class="day-btn" data-day="3">День 3<br><small>Ср</small></button>
+  <button class="day-btn" data-day="4">День 4<br><small>Чт</small></button>
+  <button class="day-btn" data-day="5">День 5<br><small>Пт</small></button>
+  <button class="day-btn" data-day="6">День 6<br><small>Сб</small></button>
+  <button class="day-btn" data-day="7">День 7<br><small>Вс</small></button>
+  <button class="day-btn reserve-btn" data-day="reserve">📦 Запасник</button>
+  <button class="day-btn gen-btn" data-day="generator">🎲 Генератор</button>
+</div>
+
+<div class="container">
+
+  <!-- ДЕНЬ 1 -->
+  <div class="day-section active" data-day="1">
+    <div class="day-header">
+      <div class="day-badge" style="background:var(--coral)">
+        <span>1</span><small>ДЕНЬ</small>
+      </div>
+      <div class="day-title">
+        <h2>🌞 День 1 — Понедельник</h2>
+        <p>09.06.2026 · Разминка, творчество, командный старт</p>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event"><div class="event-time">8:00</div><div class="event-card"><span class="tag">Утро</span><h3>🌅 Подъём</h3><p>Утренний подъём, построение.</p></div></div>
+      <div class="event"><div class="event-time">8:15</div><div class="event-card"><span class="tag">Активность</span><h3>🤸 Зарядка</h3><p>Утренняя зарядка.</p></div></div>
+      <div class="event"><div class="event-time">8:30</div><div class="event-card"><span class="tag">Быт</span><h3>🧹 Уборка комнат</h3><p>Уборка в корпусе.</p></div></div>
+      <div class="event"><div class="event-time">9:40</div><div class="event-card"><span class="tag">Еда</span><h3>🍳 Завтрак</h3><p>Завтрак в столовой.</p></div></div>
+      <div class="event"><div class="event-time">10:00</div><div class="event-card"><span class="tag">Игра</span><h3>🎯 Снайпер</h3><p>Командная игра на реакцию и внимание. Дети встают в круг, ведущий «стреляет» взглядом — нужно успеть «упасть» раньше соседей.</p><div class="indiv">Работа с зажатыми детьми — поддержка через смех и движение</div></div></div>
+      <div class="event"><div class="event-time">10:30</div><div class="event-card"><span class="tag">Творчество</span><h3>🎨 Арт-баттл «Рисуем вместе»</h3><p>Каждый начинает рисунок, по сигналу передаёт соседу. В итоге получается коллективное произведение — обсуждаем что вышло.</p></div></div>
+      <div class="event"><div class="event-time">16:30</div><div class="event-card"><span class="tag">Игра</span><h3>🔡 Слова по кругу</h3><p>Называем слова на последнюю букву предыдущего — с усложнением: только на тему «лето», «животные», «страны». Темп растёт.</p><div class="indiv">Молекула: по команде собраться в группы нужного числа</div></div></div>
+      <div class="event"><div class="event-time">19:30</div><div class="event-card"><span class="tag">Вечер</span><h3>🎤 Выступление</h3><p>Вечернее выступление отряда.</p></div></div>
+      <div class="event"><div class="event-time">21:00</div><div class="event-card"><span class="tag">Вечер</span><h3>🪩 Дискотека</h3><p>Вечерняя дискотека.</p></div></div>
+      <div class="event"><div class="event-time">21:45</div><div class="event-card"><span class="tag">Итог</span><h3>🕯️ Вечерняя свечка</h3><p>Круговой разговор: каждый называет одно слово — настроение дня.</p></div></div>
+      <div class="event"><div class="event-time">22:00</div><div class="event-card"><span class="tag">Ночь</span><h3>🌙 Отбой</h3><p>Отбой.</p></div></div>
+    </div>
+    <div class="day-summary">
+      <div class="day-summary-title">📝 Итог дня</div>
+      <p>Первый день новой недели. Арт-баттл и Снайпер задают лёгкий тон — дети включаются через игру и смех. Свечка помогает почувствовать настроение группы в начале недели.</p>
+      <div class="summary-meta">
+        <span class="summary-tag good">✅ Новая неделя</span>
+        <span class="summary-tag note">🎨 Творчество</span>
+        <span class="summary-tag indiv">🎯 Снайпер</span>
+      </div>
+    </div>
+    <div class="tips-box">
+      <h4>💡 Советы на День 1</h4>
+      <ul>
+        <li>Арт-баттл — не оцениваем результат, только процесс и смех</li>
+        <li>В Снайпере следи чтобы все участвовали, не прячутся в стороне</li>
+        <li>Свечка — слово-настроение, не давить на развёрнутый ответ</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="day-section" data-day="2">
+    <div class="day-header">
+      <div class="day-badge" style="background:var(--sky)">
+        <span>2</span><small>ДЕНЬ</small>
+      </div>
+      <div class="day-title">
+        <h2>🌊 День 2 — Вторник</h2>
+        <p>10.06.2026 · Спорт, логика, командный дух</p>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event"><div class="event-time">8:00</div><div class="event-card"><span class="tag">Утро</span><h3>🌅 Подъём</h3><p>Утренний подъём, построение.</p></div></div>
+      <div class="event"><div class="event-time">8:15</div><div class="event-card"><span class="tag">Активность</span><h3>🤸 Зарядка</h3><p>Утренняя зарядка.</p></div></div>
+      <div class="event"><div class="event-time">8:30</div><div class="event-card"><span class="tag">Быт</span><h3>🧹 Уборка комнат</h3><p>Уборка в корпусе.</p></div></div>
+      <div class="event"><div class="event-time">9:40</div><div class="event-card"><span class="tag">Еда</span><h3>🍳 Завтрак</h3><p>Завтрак в столовой.</p></div></div>
+      <div class="event"><div class="event-time">10:00</div><div class="event-card"><span class="tag">Спорт</span><h3>⚽ Пионербол</h3><p>Классический пионербол на площадке. Команды по 6–8 человек, перебрасываем мяч через сетку руками.</p><div class="indiv">Помочь слабым игрокам — позиция близко к сетке, лёгкие подачи</div></div></div>
+      <div class="event"><div class="event-time">10:30</div><div class="event-card"><span class="tag">Активность</span><h3>🎪 Эстафета «Полоса препятствий»</h3><p>Команды проходят полосу препятствий: обегают конусы, проползают под верёвкой, несут мяч ложкой. Кто быстрее?</p></div></div>
+      <div class="event"><div class="event-time">13:20</div><div class="event-card"><span class="tag">Игра</span><h3>🧩 Крокодил</h3><p>Показываем слова без звука — команда угадывает. Темы: профессии, фильмы, животные. Азартно и смешно.</p><div class="indiv">Поздравление именинников дня</div></div></div>
+      <div class="event"><div class="event-time">16:40</div><div class="event-card"><span class="tag">Игра</span><h3>🔍 «Детектив»</h3><p>Один выходит, остальные загадывают «убийцу». Детектив задаёт вопросы — кто подмигнёт нужному человеку, тот «падает». Детектив должен вычислить убийцу.</p><div class="indiv">Помочь с добрыми словами тем, кому трудно говорить комплименты</div></div></div>
+      <div class="event"><div class="event-time">19:30</div><div class="event-card"><span class="tag">Вечер</span><h3>🎤 Выступление</h3><p>Вечернее выступление отряда.</p></div></div>
+      <div class="event"><div class="event-time">21:00</div><div class="event-card"><span class="tag">Вечер</span><h3>🪩 Дискотека</h3><p>Вечерняя дискотека.</p></div></div>
+    </div>
+    <div class="day-summary">
+      <div class="day-summary-title">📝 Итог дня</div>
+      <p>Спортивный день — пионербол и эстафета дают выход энергии. Крокодил и Детектив работают на сплочение через смех. К концу дня отряд уже двигается как команда.</p>
+      <div class="summary-meta">
+        <span class="summary-tag good">✅ Спорт</span>
+        <span class="summary-tag note">🏆 Эстафета</span>
+        <span class="summary-tag indiv">🔍 Детектив</span>
+      </div>
+    </div>
+    <div class="tips-box">
+      <h4>💡 Советы на День 2</h4>
+      <ul>
+        <li>Эстафету — делать команды смешанными, не по желанию детей</li>
+        <li>В Детективе первые раунды объяснить правила медленно</li>
+        <li>Пионербол — следи за правилами, иначе превращается в хаос</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="day-section" data-day="3">
+    <div class="day-header">
+      <div class="day-badge" style="background:var(--mint)">
+        <span>3</span><small>ДЕНЬ</small>
+      </div>
+      <div class="day-title">
+        <h2>🌿 День 3 — Среда</h2>
+        <p>11.06.2026 · Творчество, сотрудничество, вечерний огонь</p>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event"><div class="event-time">8:20</div><div class="event-card"><span class="tag">Утро</span><h3>🌅 Подъём</h3><p>Подъём, построение.</p></div></div>
+      <div class="event"><div class="event-time">8:30</div><div class="event-card"><span class="tag">Активность</span><h3>🤸 Зарядка</h3><p>Утренняя зарядка.</p></div></div>
+      <div class="event"><div class="event-time">8:45</div><div class="event-card"><span class="tag">Быт</span><h3>🧹 Уборка комнат</h3><p>Уборка в корпусе.</p></div></div>
+      <div class="event"><div class="event-time">9:50</div><div class="event-card"><span class="tag">Еда</span><h3>🍳 Завтрак</h3><p>Завтрак в столовой.</p></div></div>
+      <div class="event"><div class="event-time">10:00</div><div class="event-card"><span class="tag">Творчество</span><h3>✂️ Мастерская «Сделай сам»</h3><p>Каждый делает что-то руками: браслет, открытка, рисунок, оригами. Полная свобода выбора. В конце мини-выставка.</p><div class="indiv">Поддержать тех, кто говорит «я не умею» — помочь начать</div></div></div>
+      <div class="event"><div class="event-time">16:30</div><div class="event-card"><span class="tag">Игра</span><h3>🎭 «Сценка за 5 минут»</h3><p>Команды получают карточку с ситуацией (например: «вы застряли в лифте» или «вы на необитаемом острове») и за 5 минут придумывают и показывают сценку.</p><div class="indiv">Пантомима: показать профессию без слов</div></div></div>
+      <div class="event"><div class="event-time">17:20</div><div class="event-card"><span class="tag">Игра</span><h3>🎵 Музыкальный квиз</h3><p>Угадай песню по первым 5 секундам. Команды соревнуются — кто первый назвал исполнителя или название.</p></div></div>
+      <div class="event"><div class="event-time">19:30</div><div class="event-card"><span class="tag">Мероприятие</span><h3>🌟 Мероприятие «Звёздный час»</h3><p>Каждый показывает свой талант: петь, читать стихи, жонглировать, рассказать анекдот, показать фокус — что угодно. 1–2 минуты на человека.</p></div></div>
+      <div class="event"><div class="event-time">21:00</div><div class="event-card"><span class="tag">Вечер</span><h3>🪩 Дискотека</h3><p>Вечерняя дискотека.</p></div></div>
+      <div class="event"><div class="event-time">21:45</div><div class="event-card"><span class="tag">Итог</span><h3>🕯️ Вечерняя свечка</h3><p>Каждый называет того из отряда, кем сегодня восхитился — и за что.</p></div></div>
+      <div class="event"><div class="event-time">22:00</div><div class="event-card"><span class="tag">Ночь</span><h3>🌙 Отбой</h3><p>Отбой.</p></div></div>
+    </div>
+    <div class="day-summary">
+      <div class="day-summary-title">📝 Итог дня</div>
+      <p>Творческий день — мастерская даёт каждому личное пространство, а «Звёздный час» показывает таланты, о которых никто не знал. Свечка с восхищением — очень тёплый формат к середине недели.</p>
+      <div class="summary-meta">
+        <span class="summary-tag good">✅ Творчество</span>
+        <span class="summary-tag note">🌟 Таланты</span>
+        <span class="summary-tag indiv">🕯️ Свечка</span>
+      </div>
+    </div>
+    <div class="tips-box">
+      <h4>💡 Советы на День 3</h4>
+      <ul>
+        <li>«Звёздный час» — объяви заранее после обеда, чтобы были готовы</li>
+        <li>Мастерская — подготовь материалы заранее (бумага, нитки, цветные маркеры)</li>
+        <li>Свечка без телефонов, только живые слова</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="day-section" data-day="4">
+    <div class="day-header">
+      <div class="day-badge" style="background:var(--violet)">
+        <span>4</span><small>ДЕНЬ</small>
+      </div>
+      <div class="day-title">
+        <h2>💜 День 4 — Четверг</h2>
+        <p>12.06.2026 · День России, активности, кино</p>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event"><div class="event-time">9:00</div><div class="event-card"><span class="tag">Спорт</span><h3>🏸 Бадминтон-турнир</h3><p>Мини-турнир по бадминтону: пары играют по системе олимпийской сетки. Победитель пары идёт дальше.</p><div class="indiv">Помочь всестороннему развитию — слежу за теми, кто быстро выбывает</div></div></div>
+      <div class="event"><div class="event-time">11:30</div><div class="event-card"><span class="tag">Игра</span><h3>🗺️ «Поиск сокровищ»</h3><p>Командный квест по территории: карта с подсказками, каждая подсказка ведёт к следующей. В финале — «клад» (сладкий приз).</p><div class="indiv">Дети, которым сложно в команде — дать роль «навигатора»</div></div></div>
+      <div class="event"><div class="event-time">16:30</div><div class="event-card"><span class="tag">Игра</span><h3>🧊 Живые картины</h3><p>Команда замирает в позе, изображающей сцену (картину, событие, профессию) — другая команда угадывает. Немного арт, немного пантомима.</p><div class="indiv">Развитие навыков сотрудничества</div></div></div>
+      <div class="event"><div class="event-time">19:15</div><div class="event-card"><span class="tag">Игра</span><h3>🎯 «Правда или миф»</h3><p>Ведущий называет факт о России (или о мире) — команды голосуют: правда или миф. Познавательно и азартно. Связано с Днём России.</p></div></div>
+      <div class="event"><div class="event-time">21:00</div><div class="event-card"><span class="tag">Кино</span><h3>🎬 Просмотр фильма</h3><p>Просмотр фильма всем отрядом.</p></div></div>
+      <div class="event"><div class="event-time">21:45</div><div class="event-card"><span class="tag">Итог</span><h3>🕯️ Свечка</h3><p>Вечерняя свечка — делимся впечатлением дня.</p></div></div>
+      <div class="event"><div class="event-time">22:00</div><div class="event-card"><span class="tag">Ночь</span><h3>🌙 Отбой</h3><p>Отбой.</p></div></div>
+    </div>
+    <div class="day-summary">
+      <div class="day-summary-title">📝 Итог дня</div>
+      <p>День России — отмечаем через «Правда или миф» с российской тематикой. Поиск сокровищ — один из самых любимых форматов у детей: движение, загадки, совместный результат.</p>
+      <div class="summary-meta">
+        <span class="summary-tag good">✅ День России</span>
+        <span class="summary-tag note">🗺️ Квест</span>
+        <span class="summary-tag indiv">🕯️ Свечка</span>
+      </div>
+    </div>
+    <div class="tips-box">
+      <h4>💡 Советы на День 4</h4>
+      <ul>
+        <li>Поиск сокровищ — подготовь подсказки заранее, спрячь до обеда</li>
+        <li>«Правда или миф» — 15–20 фактов хватит, темп держи быстрым</li>
+        <li>Свечка — самый важный ритуал смены, береги её атмосферу</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="day-section" data-day="5">
+    <div class="day-header">
+      <div class="day-badge" style="background:#f0a500">
+        <span>5</span><small>ДЕНЬ</small>
+      </div>
+      <div class="day-title">
+        <h2>☀️ День 5 — Пятница</h2>
+        <p>13.06.2026 · Активные игры, магазин, вечернее шоу</p>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event"><div class="event-time">8:20</div><div class="event-card"><span class="tag">Утро</span><h3>🌅 Подъём</h3><p>Подъём, построение.</p></div></div>
+      <div class="event"><div class="event-time">8:30</div><div class="event-card"><span class="tag">Активность</span><h3>🤸 Зарядка</h3><p>Утренняя зарядка.</p></div></div>
+      <div class="event"><div class="event-time">8:45</div><div class="event-card"><span class="tag">Быт</span><h3>🧹 Уборка комнат</h3><p>Уборка в корпусе.</p></div></div>
+      <div class="event"><div class="event-time">10:10</div><div class="event-card"><span class="tag">Спорт/игра</span><h3>🏐 Выбивала</h3><p>Классическая игра: два водящих по краям, в центре убегают от мяча. Можно ловить мяч — тогда получаешь жизнь. Азартно и активно.</p><div class="indiv">Хвост дракона</div></div></div>
+      <div class="event"><div class="event-time">10:30</div><div class="event-card"><span class="tag">Игра</span><h3>🌀 Живые скульптуры</h3><p>Один лепит из партнёра позу — «скульптор» молча руками задаёт положение тела. Потом угадываем, что изображает «скульптура». Смешно и творчески.</p><div class="indiv">Хвост дракона</div></div></div>
+      <div class="event"><div class="event-time">16:30</div><div class="event-card"><span class="tag">Магазин</span><h3>🛍️ Магазин</h3><p>Поход в магазин.</p><div class="indiv">Игра «Слепой и поводырь»: один с закрытыми глазами, второй ведёт только голосом</div></div></div>
+      <div class="event"><div class="event-time">17:20</div><div class="event-card"><span class="tag">Игра</span><h3>🧠 «Что в голове?»</h3><p>На лоб каждому крепится стикер с именем персонажа/предмета. Нужно угадать кто ты, задавая вопросы — только «да» или «нет».</p></div></div>
+      <div class="event"><div class="event-time">18:30</div><div class="event-card"><span class="tag">Подготовка</span><h3>🎭 Подготовка к мероприятию</h3><p>Репетиция вечернего выступления.</p><div class="indiv">Игра «Пантомима»</div></div></div>
+      <div class="event"><div class="event-time">19:30</div><div class="event-card"><span class="tag">Мероприятие</span><h3>🎪 Мероприятие «Лагерный КВН»</h3><p>КВН по мотивам жизни в лагере: приветствие, разминка, домашнее задание. Сценки про лагерный быт, вожатых, столовую.</p><div class="indiv">Слепой и поводырь</div></div></div>
+      <div class="event"><div class="event-time">21:00</div><div class="event-card"><span class="tag">Вечер</span><h3>🪩 Дискотека</h3><p>Вечерняя дискотека.</p></div></div>
+    </div>
+    <div class="day-summary">
+      <div class="day-summary-title">📝 Итог дня</div>
+      <p>Пятница — энергия максимальная. КВН про лагерь всегда заходит — дети узнают ситуации и смеются. «Что в голове?» — спокойная игра после активного дня, снимает напряжение перед вечером.</p>
+      <div class="summary-meta">
+        <span class="summary-tag good">✅ КВН</span>
+        <span class="summary-tag note">🏐 Выбивала</span>
+        <span class="summary-tag indiv">🛍️ Магазин</span>
+      </div>
+    </div>
+    <div class="tips-box">
+      <h4>💡 Советы на День 5</h4>
+      <ul>
+        <li>КВН — назначь капитанов заранее, чтобы команды не тратили время на споры</li>
+        <li>«Что в голове?» — выбирай понятные персонажи, не слишком сложные</li>
+        <li>Выбивала — следи за границами поля и честной игрой, дети быстро начинают спорить</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="day-section" data-day="6">
+    <div class="day-header">
+      <div class="day-badge" style="background:#ff8e53">
+        <span>6</span><small>ДЕНЬ</small>
+      </div>
+      <div class="day-title">
+        <h2>🧡 День 6 — Суббота</h2>
+        <p>14.06.2026 · Настолки, ЧЗО, фильм, выступление</p>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event"><div class="event-time">8:15</div><div class="event-card"><span class="tag">Активность</span><h3>🤸 Зарядка</h3><p>Утренняя зарядка.</p></div></div>
+      <div class="event"><div class="event-time">8:30</div><div class="event-card"><span class="tag">Быт</span><h3>🧹 Уборка комнат</h3><p>Уборка в корпусе.</p></div></div>
+      <div class="event"><div class="event-time">9:10</div><div class="event-card"><span class="tag">Еда</span><h3>🍳 Завтрак</h3><p>Завтрак в столовой.</p></div></div>
+      <div class="event"><div class="event-time">10:00</div><div class="event-card"><span class="tag">Игра</span><h3>🤝 «Верёвочный курс»</h3><p>Командные испытания с верёвками: «паутина» — пролезть в ячейки не задев, «болото» — перейти по «кочкам» всей командой. Задачи на доверие и координацию.</p></div></div>
+      <div class="event"><div class="event-time">10:30</div><div class="event-card"><span class="tag">Интеллект</span><h3>🎯 «Своя игра»</h3><p>Интеллектуальное шоу: категории и цена вопроса. Каждый выбирает тему и сумму — «История», «Природа», «Лагерный быт», «Кино» — и отвечает на вопрос. Больше баллов — смелее выбор.</p><div class="indiv">Игра «Зеркало»: встаём в пары, повторяем движения</div></div></div>
+      <div class="event"><div class="event-time">11:00</div><div class="event-card"><span class="tag">Творчество</span><h3>🎨 Граффити-стена</h3><p>Большой лист ватмана на стене — каждый рисует или пишет что хочет: дата, имя, любимая цитата, рисунок. В конце смены это общая картина отряда.</p></div></div>
+      <div class="event"><div class="event-time">16:30</div><div class="event-card"><span class="tag">Подготовка</span><h3>🎭 Подготовка к номеру</h3><p>Репетиция вечернего выступления.</p></div></div>
+      <div class="event"><div class="event-time">19:30</div><div class="event-card"><span class="tag">Мероприятие</span><h3>🎤 Выступление «Голос лагеря»</h3><p>Творческое шоу в формате вокального конкурса: поют соло или дуэтом, зрители — жюри. Голосуем хлопками.</p></div></div>
+      <div class="event"><div class="event-time">21:00</div><div class="event-card"><span class="tag">Вечер</span><h3>🪩 Дискотека</h3><p>Вечерняя дискотека.</p></div></div>
+      <div class="event"><div class="event-time">21:45</div><div class="event-card"><span class="tag">Итог</span><h3>🕯️ Свечка</h3><p>Вечерняя свечка — предпоследний день недели, разговор становится теплее.</p></div></div>
+      <div class="event"><div class="event-time">22:00</div><div class="event-card"><span class="tag">Ночь</span><h3>🌙 Отбой</h3><p>Отбой.</p></div></div>
+    </div>
+    <div class="day-summary">
+      <div class="day-summary-title">📝 Итог дня</div>
+      <p>Суббота — чуть спокойнее, но насыщенно. Верёвочный курс сплачивает через физический вызов. «Своя игра» — интеллектуальный азарт без давления. Граффити-стена — тихое творческое время. «Голос лагеря» раскрывает тех, кто молчал всю неделю.</p>
+      <div class="summary-meta">
+        <span class="summary-tag good">✅ Суббота</span>
+        <span class="summary-tag note">🎤 Голос лагеря</span>
+        <span class="summary-tag indiv">🕯️ Свечка тёплая</span>
+      </div>
+    </div>
+    <div class="tips-box">
+      <h4>💡 Советы на День 6</h4>
+      <ul>
+        <li>«Голос лагеря» — поддерживай даже тех, кто поёт не очень: аплодисменты для всех</li>
+        <li>«Своя игра» — подготовь 15–20 вопросов разной сложности и цены</li>
+        <li>Верёвочный курс — объясни правила чётко, иначе дети начнут халтурить</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="day-section" data-day="7">
+    <div class="day-header">
+      <div class="day-badge" style="background:var(--navy)">
+        <span>7</span><small>ДЕНЬ</small>
+      </div>
+      <div class="day-title">
+        <h2>🌙 День 7 — Воскресенье</h2>
+        <p>15.06.2026 · Настолки, уборка, квиз, выступление, дискотека</p>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event"><div class="event-time">8:40</div><div class="event-card"><span class="tag">Утро</span><h3>🌅 Подъём</h3><p>Подъём, построение.</p></div></div>
+      <div class="event"><div class="event-time">9:10</div><div class="event-card"><span class="tag">Еда</span><h3>🍳 Завтрак</h3><p>Завтрак в столовой.</p></div></div>
+      <div class="event"><div class="event-time">9:30</div><div class="event-card"><span class="tag">Игра</span><h3>🏹 Дартс-турнир</h3><p>Мини-турнир по дартсу (или кольцеброс). Каждый кидает по 3 броска, считаем очки. В конце — финал лучших. Весело, спокойно, соревновательно.</p></div></div>
+      <div class="event"><div class="event-time">10:10</div><div class="event-card"><span class="tag">Быт</span><h3>🧹 Уборка территории</h3><p>Уборка территории и корпуса всем отрядом.</p></div></div>
+      <div class="event"><div class="event-time">16:30</div><div class="event-card"><span class="tag">Подготовка</span><h3>🎭 Подготовка к выступлению</h3><p>Репетиция и подготовка к вечернему выступлению.</p></div></div>
+      <div class="event"><div class="event-time">17:20</div><div class="event-card"><span class="tag">Интеллект</span><h3>🏆 Квиз</h3><p>Командный квиз — вопросы на эрудицию, смекалку, вопросы о лагере. Весело и азартно.</p></div></div>
+      <div class="event"><div class="event-time">19:30</div><div class="event-card"><span class="tag">Мероприятие</span><h3>🎤 Выступление и военно-патриотическая линейка</h3><p>Выступление отряда. Военно-патриотическая линейка.</p></div></div>
+      <div class="event"><div class="event-time">21:00</div><div class="event-card"><span class="tag">Вечер</span><h3>🪩 Дискотека</h3><p>Вечерняя дискотека.</p></div></div>
+      <div class="event"><div class="event-time">21:45</div><div class="event-card"><span class="tag">Итог</span><h3>🕯️ Вечерняя свечка</h3><p>Вечерний круг. Делимся впечатлениями дня.</p></div></div>
+      <div class="event"><div class="event-time">22:00</div><div class="event-card"><span class="tag">Ночь</span><h3>🌙 Отбой</h3><p>Отбой.</p></div></div>
+    </div>
+    <div class="day-summary">
+      <div class="day-summary-title">📝 Итог дня</div>
+      <p>Воскресенье — конец рабочей недели, но не конец смены. Квиз вызвал азарт, линейка прошла организованно. Дартс-турнир с утра задаёт соревновательный, но спокойный тон. Следующая неделя впереди — отряд набрал хороший темп.</p>
+      <div class="summary-meta">
+        <span class="summary-tag good">✅ Неделя завершена</span>
+        <span class="summary-tag note">🏆 Квиз</span>
+        <span class="summary-tag indiv">🕯️ Свечка</span>
+      </div>
+    </div>
+    <div class="tips-box">
+      <h4>💡 Советы на День 7</h4>
+      <ul>
+        <li>Квиз — подготовь вопросы про события этой недели в лагере</li>
+        <li>Уборка территории — раздели участки заранее, не оставляй на самотёк</li>
+        <li>Дартс/кольцеброс — дай каждому попробовать перед турниром, чтобы освоились</li>
+      </ul>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- ЗАПАСНИК -->
+  <div class="day-section" data-day="reserve" id="reserve-section">
+
+    <div class="day-header">
+      <div class="day-badge" style="background:linear-gradient(135deg,#ff6b6b,#c77dff);">
+        <span style="font-size:1.5rem">📦</span>
+      </div>
+      <div class="day-title">
+        <h2>🗂️ Запасник вожатой</h2>
+        <p>Достань любую идею — и в бой. Вкладки по категориям.</p>
+      </div>
+    </div>
+
+    <!-- Inner category tabs -->
+    <div class="cat-tabs">
+      <button class="cat-btn active" data-cat="scenes">🎭 Сценки</button>
+      <button class="cat-btn" data-cat="contest">🏆 Конкурсы</button>
+      <button class="cat-btn" data-cat="leisure">☀️ Досуг</button>
+      <button class="cat-btn" data-cat="fast">⚡ Быстрые</button>
+      <button class="cat-btn" data-cat="extra">🆘 Запасные</button>
+    </div>
+
+    <!-- СЦЕНКИ -->
+    <div class="cat-panel active" id="cat-scenes">
+      <div class="rg2">
+
+        <div class="rc" data-color="#ff6b6b">
+          <div class="rc-head">
+            <span class="rc-time">15–20 мин</span><span class="rc-who">3–6 чел</span>
+          </div>
+          <div class="rc-title">🎤 Суд над телефоном</div>
+          <div class="rc-body">Роли: обвинитель, адвокат, судья, свидетели — соцсети, игры, камера. Телефон обвиняется в «краже времени». Каждый защищает или атакует.</div>
+          <div class="rc-tip">Подростки включаются мгновенно — тема прямо про них. После — живая дискуссия.</div>
+        </div>
+
+        <div class="rc" data-color="#c77dff">
+          <div class="rc-head">
+            <span class="rc-time">10–15 мин</span><span class="rc-who">4–5 чел</span>
+          </div>
+          <div class="rc-title">🤖 Собеседование в будущем</div>
+          <div class="rc-body">2086 год. Один — работодатель-робот, остальные — кандидаты на должность «Хранитель памяти» или «Специалист по снам». Нужно убедить взять именно тебя.</div>
+          <div class="rc-tip">Чистая импровизация, реквизит не нужен. Развивает уверенность в себе.</div>
+        </div>
+
+        <div class="rc" data-color="#4ecdc4">
+          <div class="rc-head">
+            <span class="rc-time">20–25 мин</span><span class="rc-who">весь отряд</span>
+          </div>
+          <div class="rc-title">🎬 Немое кино</div>
+          <div class="rc-body">Команды получают ситуацию (ссора друзей, потеря кошки, первый день на работе) и разыгрывают её без слов. Зрители угадывают сюжет.</div>
+          <div class="rc-tip">Снимай на видео — все захотят посмотреть на себя потом.</div>
+        </div>
+
+        <div class="rc" data-color="#6bcb77">
+          <div class="rc-head">
+            <span class="rc-time">15–20 мин</span><span class="rc-who">4 чел</span>
+          </div>
+          <div class="rc-title">🎙️ Дублёры</div>
+          <div class="rc-body">Двое молча разыгрывают сцену, двое других сзади озвучивают вслух — придумывают диалог на ходу. Результат всегда абсурдный.</div>
+          <div class="rc-tip">Никакого реквизита, работает в любом помещении.</div>
+        </div>
+
+        <div class="rc" data-color="#ffd93d">
+          <div class="rc-head">
+            <span class="rc-time">25–30 мин</span><span class="rc-who">2–3 команды</span>
+          </div>
+          <div class="rc-title">📖 Сказка по-новому</div>
+          <div class="rc-body">Берём сказку (Золушка, Колобок, Репка) и переносим в наше время. Золушка — блогер, Колобок — стартапер, Репка — корпоративный тимбилдинг.</div>
+          <div class="rc-tip">10 минут на подготовку — и абсурдные, смешные сценки гарантированы.</div>
+        </div>
+
+        <div class="rc" data-color="#ff8e53">
+          <div class="rc-head">
+            <span class="rc-time">15–20 мин</span><span class="rc-who">2 команды</span>
+          </div>
+          <div class="rc-title">📸 Живая фотосессия</div>
+          <div class="rc-body">Команды получают роли (злодей, детектив, инопланетянин, учёный) и придумывают общую «живую фотографию». Вожатый называет жанр: реклама, ужастик, романтика.</div>
+          <div class="rc-tip">Быстрая и смешная — отлично между долгими активностями.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- КОНКУРСЫ -->
+    <div class="cat-panel" id="cat-contest">
+      <div class="rg2">
+
+        <div class="rc" data-color="#4ecdc4">
+          <div class="rc-head">
+            <span class="rc-time">30 мин</span><span class="rc-who">команды</span>
+          </div>
+          <div class="rc-title">📦 Реклама невозможного</div>
+          <div class="rc-body">Команда получает бессмысленный предмет (сломанная ручка, пустая коробка) и за 10 минут придумывает рекламный ролик — как будто это лучший товар года.</div>
+          <div class="rc-tip">Зрители голосуют поднятием руки. Развивает креативность и уверенность.</div>
+        </div>
+
+        <div class="rc" data-color="#ff6b6b">
+          <div class="rc-head">
+            <span class="rc-time">20–25 мин</span><span class="rc-who">весь отряд</span>
+          </div>
+          <div class="rc-title">🌟 Мисс и Мистер Лагерь</div>
+          <div class="rc-body">Номинации: «Самый сонный», «Лучший актёр драмы», «Главный по идеям», «Громче всех смеётся». Голосуют тайно на листочках, объявление — торжественно.</div>
+          <div class="rc-tip">Только добрые номинации! Лучше чтобы каждый получил хоть одну.</div>
+        </div>
+
+        <div class="rc" data-color="#6bcb77">
+          <div class="rc-head">
+            <span class="rc-time">15–20 мин</span><span class="rc-who">команды</span>
+          </div>
+          <div class="rc-title">🏗️ Башня из ничего</div>
+          <div class="rc-body">Каждая команда: 10 листов бумаги, скотч, 5 трубочек. Построить самую высокую стоячую башню за 12 минут. Измеряем линейкой.</div>
+          <div class="rc-tip">Подростки относятся очень серьёзно — азарт включается сам.</div>
+        </div>
+
+        <div class="rc" data-color="#c77dff">
+          <div class="rc-head">
+            <span class="rc-time">25–30 мин</span><span class="rc-who">весь отряд</span>
+          </div>
+          <div class="rc-title">🖼️ Битва художников</div>
+          <div class="rc-body">Все рисуют по команде вожатого (животное, эмоция, мечта, лагерь через 100 лет). Листы вывешиваются анонимно — угадывают автора, голосуют за лучшее.</div>
+          <div class="rc-tip">«Не умею рисовать» — не отмазка, это часть правил. Кривые рисунки часто выигрывают.</div>
+        </div>
+
+        <div class="rc" data-color="#ffd93d">
+          <div class="rc-head">
+            <span class="rc-time">30–40 мин</span><span class="rc-who">2–3 команды</span>
+          </div>
+          <div class="rc-title">🎤 Музыкальный баттл</div>
+          <div class="rc-body">Команды по очереди поют строчку из любой песни, в которой есть заданное слово (например «небо», «ночь», «сердце»). Кто не может вспомнить — выбывает.</div>
+          <div class="rc-tip">Очень энергичный конкурс. Не требует подготовки и реквизита.</div>
+        </div>
+
+        <div class="rc" data-color="#ff8e53">
+          <div class="rc-head">
+            <span class="rc-time">20–25 мин</span><span class="rc-who">все</span>
+          </div>
+          <div class="rc-title">🧵 Мода из мусора</div>
+          <div class="rc-body">Команды получают пакеты, газеты, скотч, верёвки. Задача — создать наряд и устроить мини-показ мод. Жюри оценивает оригинальность и презентацию.</div>
+          <div class="rc-tip">Хит у подростков 13–16 лет. Все хотят фотографии после показа.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ДОСУГ -->
+    <div class="cat-panel" id="cat-leisure">
+      <div class="rg2">
+
+        <div class="rc" data-color="#ffd93d">
+          <div class="rc-head">
+            <span class="rc-time">ежедневно</span><span class="rc-who">каждый</span>
+          </div>
+          <div class="rc-title">📔 Дневник смены</div>
+          <div class="rc-body">Каждый ведёт личный дневник — рисует, пишет, клеит. Вечером вожатый предлагает вопрос: «Что удивило?», «Кем восхищаешься в отряде?».</div>
+          <div class="rc-tip">Дети уносят домой как главный сувенир. Отлично перед отбоем.</div>
+        </div>
+
+        <div class="rc" data-color="#4ecdc4">
+          <div class="rc-head">
+            <span class="rc-time">30–40 мин</span><span class="rc-who">по желанию</span>
+          </div>
+          <div class="rc-title">🎵 Музыкальная гостиная</div>
+          <div class="rc-body">Кто хочет — показывает талант: поёт, играет, читает стих или рэп. Атмосфера кафе: слушают без оценок, только аплодисменты.</div>
+          <div class="rc-tip">Не объявляй заранее — начни сам(а) с чего-то короткого, остальные подтянутся.</div>
+        </div>
+
+        <div class="rc" data-color="#ff8e53">
+          <div class="rc-head">
+            <span class="rc-time">45–60 мин</span><span class="rc-who">весь отряд</span>
+          </div>
+          <div class="rc-title">🎨 Общая картина</div>
+          <div class="rc-body">Ватман на полу, все рисуют вместе: «Наш идеальный лагерь», «Мы через 10 лет», «Лагерный зоопарк». Никаких правил — каждый добавляет своё.</div>
+          <div class="rc-tip">Включи фоновую музыку. Снимает напряжение после насыщенного дня.</div>
+        </div>
+
+        <div class="rc" data-color="#6bcb77">
+          <div class="rc-head">
+            <span class="rc-time">20–30 мин</span><span class="rc-who">в кругу</span>
+          </div>
+          <div class="rc-title">📚 Живая библиотека</div>
+          <div class="rc-body">Каждый — «книга» с темой (хобби, история, место). Остальные «берут книгу» — подходят и слушают 5 минут один на один.</div>
+          <div class="rc-tip">Открывает неожиданные таланты. Вдруг кто-то знает 3 языка или разводит пчёл.</div>
+        </div>
+
+        <div class="rc" data-color="#c77dff">
+          <div class="rc-head">
+            <span class="rc-time">вечер</span><span class="rc-who">малые группы</span>
+          </div>
+          <div class="rc-title">🌌 Разговор под небом</div>
+          <div class="rc-body">Выйти на улицу, лечь на траву и говорить: о мечтах, страхах, о чём думают когда не могут уснуть. Вожатый задаёт вопросы и не торопит с ответами.</div>
+          <div class="rc-tip">Самые важные разговоры — без плана и времени. Не торопи, просто будь рядом.</div>
+        </div>
+
+        <div class="rc" data-color="#ff6b6b">
+          <div class="rc-head">
+            <span class="rc-time">15–20 мин</span><span class="rc-who">везде</span>
+          </div>
+          <div class="rc-title">✍️ Стена желаний</div>
+          <div class="rc-body">Большой лист — дети пишут анонимно мечты и вопросы к миру. Вожатый вечером читает вслух и отвечает на те, что можно. Остальные обсуждают.</div>
+          <div class="rc-tip">Даёт голос тем, кто молчит вслух. Часто выходят неожиданно глубокие вещи.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- БЫСТРЫЕ ИГРЫ -->
+    <div class="cat-panel" id="cat-fast">
+      <p style="font-size:0.85rem;color:#999;margin-bottom:16px;">Достань в любой момент — пока ждёте, после еды, между делами.</p>
+      <div class="fast-list">
+
+        <div class="fast-item">
+          <div class="fast-emoji">👆</div>
+          <div class="fast-content">
+            <div class="fast-name">Пальцы <span class="fast-dur">5 мин</span></div>
+            <div class="fast-desc">Все одновременно показывают 1–5 пальцев. Чья сумма совпадёт с числом, которое угадал ведущий — выбывает.</div>
+          </div>
+        </div>
+
+        <div class="fast-item">
+          <div class="fast-emoji">🫵</div>
+          <div class="fast-content">
+            <div class="fast-name">Контакт <span class="fast-dur">10–15 мин</span></div>
+            <div class="fast-desc">Ведущий загадывает слово. Остальные дают подсказки и «перехватывают» их друг у друга — угадавший выбивает по букве у ведущего.</div>
+          </div>
+        </div>
+
+        <div class="fast-item">
+          <div class="fast-emoji">🔢</div>
+          <div class="fast-content">
+            <div class="fast-name">33 <span class="fast-dur">7–10 мин</span></div>
+            <div class="fast-desc">Считаем по кругу. Вместо чисел кратных 3 и содержащих цифру 3 — хлопок. Ошибся — выбываешь.</div>
+          </div>
+        </div>
+
+        <div class="fast-item">
+          <div class="fast-emoji">🤫</div>
+          <div class="fast-content">
+            <div class="fast-name">Статуя <span class="fast-dur">5–7 мин</span></div>
+            <div class="fast-desc">Музыка — все двигаются. Стоп — замирают. Кто шевельнулся — выбывает. Последний — победитель.</div>
+          </div>
+        </div>
+
+        <div class="fast-item">
+          <div class="fast-emoji">🧩</div>
+          <div class="fast-content">
+            <div class="fast-name">Ассоциативная цепочка <span class="fast-dur">5–8 мин</span></div>
+            <div class="fast-desc">Говорим по кругу ассоциации без остановок. Кто завис дольше 3 секунд — выбывает. Темп нарастает.</div>
+          </div>
+        </div>
+
+        <div class="fast-item">
+          <div class="fast-emoji">✊</div>
+          <div class="fast-content">
+            <div class="fast-name">Эволюция <span class="fast-dur">7–10 мин</span></div>
+            <div class="fast-desc">Все начинают «яйцом». Победил в камень-ножницы-бумагу — эволюционируешь: яйцо → цыплёнок → человек → суперчеловек.</div>
+          </div>
+        </div>
+
+        <div class="fast-item">
+          <div class="fast-emoji">🎯</div>
+          <div class="fast-content">
+            <div class="fast-name">Поймай взгляд <span class="fast-dur">5 мин</span></div>
+            <div class="fast-desc">Все стоят в кругу, смотрят вниз. По команде поднимают глаза. Если встретились взглядом — оба хлопают и выбывают. Цель — остаться последним.</div>
+          </div>
+        </div>
+
+        <div class="fast-item">
+          <div class="fast-emoji">🌀</div>
+          <div class="fast-content">
+            <div class="fast-name">Японская машинка <span class="fast-dur">5–7 мин</span></div>
+            <div class="fast-desc">Ритм: хлопок по коленям — хлопок в ладоши — щелчок правой — щелчок левой. На щелчках называем слова по теме. Сбился — выбываешь.</div>
+          </div>
+        </div>
+    </div><!-- end fast-list -->
+    </div><!-- end cat-fast -->
+
+    <!-- ЗАПАСНЫЕ МЕРОПРИЯТИЯ -->
+    <div class="cat-panel" id="cat-extra">
+      <p style="font-size:0.85rem;color:#999;margin-bottom:16px;">Готовые мероприятия на случай когда нужно срочно чем-то занять отряд.</p>
+      <div class="rg2">
+
+        <div class="rc" data-color="#4ecdc4">
+          <div class="rc-head"><span class="rc-time">20–30 мин</span><span class="rc-who">весь отряд</span></div>
+          <div class="rc-title">🗺️ Квест по территории</div>
+          <div class="rc-body">Делим на 2–3 команды. Вожатый прячет 5–6 записок с подсказками по территории лагеря. Каждая подсказка ведёт к следующей. В финале — сладкий приз.</div>
+          <div class="rc-tip">Готовишь 15 минут — работает всегда. Можно запустить прямо сейчас.</div>
+        </div>
+
+        <div class="rc" data-color="#ff6b6b">
+          <div class="rc-head"><span class="rc-time">15–20 мин</span><span class="rc-who">весь отряд</span></div>
+          <div class="rc-title">🎨 Нарисуй соседа</div>
+          <div class="rc-body">Каждый рисует портрет соседа справа — 3 минуты. Потом все показывают и угадывают кто есть кто. Смех гарантирован.</div>
+          <div class="rc-tip">Нужны только бумага и ручки. Работает в любое время дня.</div>
+        </div>
+
+        <div class="rc" data-color="#c77dff">
+          <div class="rc-head"><span class="rc-time">25–35 мин</span><span class="rc-who">2 команды</span></div>
+          <div class="rc-title">🎤 Угадай мелодию</div>
+          <div class="rc-body">Вожатый мычит или насвистывает мелодию — команды угадывают. Потом участники сами становятся исполнителями. Можно на телефоне включать 5 секунд трека.</div>
+          <div class="rc-tip">Без реквизита. Можно играть за столом, в корпусе, на улице.</div>
+        </div>
+
+        <div class="rc" data-color="#6bcb77">
+          <div class="rc-head"><span class="rc-time">20–25 мин</span><span class="rc-who">весь отряд</span></div>
+          <div class="rc-title">📝 10 фактов обо мне</div>
+          <div class="rc-body">Каждый пишет 10 фактов о себе — 3 из них ложные. Зачитывает вслух, остальные голосуют: правда или ложь. Кто обманул больше — победил.</div>
+          <div class="rc-tip">Нужны листочки. Очень сближает — узнаёшь неожиданные вещи о людях рядом.</div>
+        </div>
+
+        <div class="rc" data-color="#ffd93d">
+          <div class="rc-head"><span class="rc-time">15–20 мин</span><span class="rc-who">любая группа</span></div>
+          <div class="rc-title">🔮 Машина времени</div>
+          <div class="rc-body">Каждый пишет письмо себе через 10 лет — 5 минут. Потом желающие читают вслух или вожатый зачитывает анонимно. Обсуждаем мечты и планы.</div>
+          <div class="rc-tip">Хорошо на свечке или в тихий час. Часто неожиданно глубокие ответы.</div>
+        </div>
+
+        <div class="rc" data-color="#ff8e53">
+          <div class="rc-head"><span class="rc-time">30–40 мин</span><span class="rc-who">2–3 команды</span></div>
+          <div class="rc-title">🎬 Реклама отряда</div>
+          <div class="rc-body">Команды за 15 минут придумывают рекламный ролик своего отряда — как лучшего места на земле. Снимают на телефон или разыгрывают вживую.</div>
+          <div class="rc-tip">Дети сами начинают режиссировать и спорить — вожатый просто наблюдает.</div>
+        </div>
+
+        <div class="rc" data-color="#1a1a2e">
+          <div class="rc-head"><span class="rc-time">20–30 мин</span><span class="rc-who">весь отряд</span></div>
+          <div class="rc-title">🧠 Своя игра</div>
+          <div class="rc-body">4 темы по 5 вопросов (100–500 очков). Темы: лагерь, кино, музыка, спорт. Отвечает тот кто первый поднял руку. Вожатый — ведущий.</div>
+          <div class="rc-tip">Подготовь 20 вопросов заранее и держи в телефоне — сыграешь в любой момент.</div>
+        </div>
+
+        <div class="rc" data-color="#4ecdc4">
+          <div class="rc-head"><span class="rc-time">10–15 мин</span><span class="rc-who">весь отряд</span></div>
+          <div class="rc-title">🫂 Клубок</div>
+          <div class="rc-body">Стоим в кругу. Один держит нитку клубка, говорит что-то хорошее про кого-то и бросает ему клубок. Так пока не образуется паутина — видно как все связаны.</div>
+          <div class="rc-tip">Нужен клубок ниток. Хорошо в конце недели или после конфликта в отряде.</div>
+        </div>
+
+        <div class="rc" data-color="#ff6b6b">
+          <div class="rc-head"><span class="rc-time">15–20 мин</span><span class="rc-who">весь отряд</span></div>
+          <div class="rc-title">🌡️ Шкала мнений</div>
+          <div class="rc-body">Вожатый называет утверждение: «Лагерь лучше города», «Оценки важны». Все встают на воображаемой линии от «согласен» до «нет». Обсуждаем почему.</div>
+          <div class="rc-tip">Развивает умение аргументировать. Все позиции уважаются.</div>
+        </div>
+
+        <div class="rc" data-color="#6bcb77">
+          <div class="rc-head"><span class="rc-time">20–25 мин</span><span class="rc-who">2–4 команды</span></div>
+          <div class="rc-title">🏝️ Необитаемый остров</div>
+          <div class="rc-body">Команде дан список 20 предметов — можно взять только 7. Нужно договориться за 7 минут. Потом каждая команда объясняет свой выбор.</div>
+          <div class="rc-tip">Отлично для работы в команде. Часто выходят неожиданные лидеры.</div>
+        </div>
+
+        <div class="rc" data-color="#6bcb77">
+          <div class="rc-head"><span class="rc-time">20–25 мин</span><span class="rc-who">весь отряд</span></div>
+          <div class="rc-title">📝 10 фактов обо мне</div>
+          <div class="rc-body">Каждый пишет 10 фактов о себе — 3 из них ложные. Зачитывает вслух, остальные голосуют: правда или ложь. Кто обманул больше — победил.</div>
+          <div class="rc-tip">Нужны листочки. Очень сближает — узнаёшь неожиданные вещи о людях рядом.</div>
+        </div>
+
+        <div class="rc" data-color="#ffd93d">
+          <div class="rc-head"><span class="rc-time">15–20 мин</span><span class="rc-who">любая группа</span></div>
+          <div class="rc-title">🔮 Машина времени</div>
+          <div class="rc-body">Каждый пишет письмо себе через 10 лет — 5 минут. Потом желающие читают вслух или вожатый зачитывает анонимно. Обсуждаем мечты и планы.</div>
+          <div class="rc-tip">Хорошо на свечке или в тихий час. Часто неожиданно глубокие ответы.</div>
+        </div>
+
+        <div class="rc" data-color="#1a1a2e">
+          <div class="rc-head"><span class="rc-time">30–40 мин</span><span class="rc-who">2–3 команды</span></div>
+          <div class="rc-title">🎬 Реклама отряда</div>
+          <div class="rc-body">Команды за 15 минут придумывают рекламный ролик своего отряда — как лучшего места на земле. Снимают на телефон или разыгрывают вживую.</div>
+          <div class="rc-tip">Дети сами начинают режиссировать и спорить — вожатый просто наблюдает.</div>
+        </div>
+
+        <div class="rc" data-color="#ff6b6b">
+          <div class="rc-head"><span class="rc-time">10–15 мин</span><span class="rc-who">весь отряд</span></div>
+          <div class="rc-title">🫂 Клубок</div>
+          <div class="rc-body">Стоим в кругу. Один держит нитку клубка, говорит что-то хорошее про кого-то и бросает ему клубок. Так пока не образуется паутина — видно как все связаны.</div>
+          <div class="rc-tip">Нужен клубок ниток. Хорошо в конце недели или после конфликта в отряде.</div>
+        </div>
+
+        <div class="rc" data-color="#c77dff">
+          <div class="rc-head"><span class="rc-time">20–25 мин</span><span class="rc-who">команды</span></div>
+          <div class="rc-title">🏝️ Необитаемый остров</div>
+          <div class="rc-body">Команде дан список 20 предметов — можно взять только 7. Нужно договориться за 7 минут. Потом каждая команда объясняет свой выбор.</div>
+          <div class="rc-tip">Отлично для работы в команде. Часто выходят неожиданные лидеры.</div>
+        </div>
+
+        <div class="rc" data-color="#4ecdc4">
+          <div class="rc-head"><span class="rc-time">25–30 мин</span><span class="rc-who">весь отряд</span></div>
+          <div class="rc-title">🌡️ Шкала мнений</div>
+          <div class="rc-body">Вожатый называет утверждение: «Лагерь лучше города», «Оценки важны». Все встают на воображаемой линии от «согласен» до «нет». Обсуждаем почему.</div>
+          <div class="rc-tip">Развивает умение аргументировать. Все позиции уважаются — нет правильного ответа.</div>
+        </div>
+
+        <div class="rc" data-color="#ff8e53">
+          <div class="rc-head"><span class="rc-time">20–30 мин</span><span class="rc-who">весь отряд</span></div>
+          <div class="rc-title">🏃 Эстафета «Верёвочный курс»</div>
+          <div class="rc-body">Командные испытания с верёвками: «паутина» — пролезть не задев, «болото» — перейти по кочкам всей командой. Задачи на доверие и координацию.</div>
+          <div class="rc-tip">Объясни правила чётко до старта — иначе команды начнут спорить что считается касанием.</div>
+        </div>
+
+        <div class="rc" data-color="#6bcb77">
+          <div class="rc-head"><span class="rc-time">15–20 мин</span><span class="rc-who">2 команды</span></div>
+          <div class="rc-title">🤸 Тело к телу</div>
+          <div class="rc-body">Ведущий называет части тела: «ладонь к ладони», «колено к плечу» — участники парами выполняют. Темп нарастает. Кто запутался — выбывает.</div>
+          <div class="rc-tip">Быстро разогревает группу. Хорошо в начале дня или после долгого сидения.</div>
+        </div>
+
+        <div class="rc" data-color="#ff6b6b">
+          <div class="rc-head"><span class="rc-time">20–30 мин</span><span class="rc-who">весь отряд</span></div>
+          <div class="rc-title">🗺️ Маршрутная игра</div>
+          <div class="rc-body">Несколько станций по территории. На каждой — задание: загадка, спортивное испытание, творческое задание. Команды проходят по очереди, считают очки.</div>
+          <div class="rc-tip">Готовишь 20 минут — работает час. Спрячь задания заранее утром.</div>
+        </div>
+
+        <div class="rc" data-color="#c77dff">
+          <div class="rc-head"><span class="rc-time">15–20 мин</span><span class="rc-who">в кругу</span></div>
+          <div class="rc-title">🪄 Передай движение</div>
+          <div class="rc-body">Стоим в кругу. Один задаёт движение — следующий повторяет и добавляет своё. Цепочка нарастает. Кто сбился — становится ведущим.</div>
+          <div class="rc-tip">Тихая и концентрирующая игра. Хорошо перед свечкой или после активной части.</div>
+        </div>
+
+    </div><!-- end rg2 extra -->
+    </div><!-- end cat-extra -->
+
+  </div><!-- end reserve-section -->
+
+  <!-- ГЕНЕРАТОР -->
+  <div class="day-section" data-day="generator" id="generator-section">
+    <div class="gen-header">
+      <h2>🎲 Генератор мероприятий</h2>
+      <p>Нажми — получи случайную идею. Не нравится? Реролл!</p>
+    </div>
+
+    <div class="gen-filters">
+      <span style="font-size:0.8rem;font-weight:700;color:#aaa;padding:7px 4px;align-self:center">Тип:</span>
+      <button class="gen-filter active" data-filter="all">Все</button>
+      <button class="gen-filter" data-filter="active">🏃 Активные</button>
+      <button class="gen-filter" data-filter="creative">🎨 Творческие</button>
+      <button class="gen-filter" data-filter="intel">🧠 Интеллект</button>
+      <button class="gen-filter" data-filter="scene">🎭 Сценки</button>
+      <button class="gen-filter" data-filter="calm">🌙 Спокойные</button>
+      <button class="gen-filter" data-filter="fast">⚡ Быстрые</button>
+    </div>
+
+    <button class="gen-roll-btn">🎲 Случайное мероприятие!</button>
+
+    <div class="gen-result" id="gen-result">
+      <div class="gen-result-type" id="gen-type"></div>
+      <span class="gen-result-emoji" id="gen-emoji"></span>
+      <div class="gen-result-title" id="gen-title"></div>
+      <div class="gen-result-meta" id="gen-meta"></div>
+      <div class="gen-result-desc" id="gen-desc"></div>
+      <div class="gen-result-tip" id="gen-tip"></div>
+      <button class="gen-reroll">🔄 Другое мероприятие</button>
+    </div>
+  </div>
+
+<script>
+  function showDay(n) {
+    document.querySelectorAll('.day-section').forEach(function(s){ s.classList.remove('active'); });
+    document.querySelectorAll('.day-btn').forEach(function(b){ b.classList.remove('active'); });
+    var sec = document.querySelector('.day-section[data-day="' + n + '"]');
+    var btn = document.querySelector('.day-btn[data-day="' + n + '"]');
+    if (sec) sec.classList.add('active');
+    if (btn) btn.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function showCat(cat, el) {
+    var panels = document.querySelectorAll('.cat-panel');
+    for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+    var cbtns = document.querySelectorAll('.cat-btn');
+    for (var i = 0; i < cbtns.length; i++) cbtns[i].classList.remove('active');
+    document.getElementById('cat-' + cat).classList.add('active');
+    if (el) el.classList.add('active');
+  }
+
+  // ====== iOS-SAFE EVENT BINDING ======
+  // On iOS Safari local files: just use click — it works fine on buttons.
+  // touchend + preventDefault was blocking the click event on iOS.
+  function bindTap(el, fn) {
+    el.addEventListener('click', function(e) {
+      fn(e);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Bind day navigation buttons
+    document.querySelectorAll('.day-btn').forEach(function(btn) {
+      bindTap(btn, function() {
+        showDay(btn.dataset.day);
+      });
+    });
+
+    // Bind category tabs in reserve section
+    document.querySelectorAll('.cat-btn').forEach(function(btn) {
+      bindTap(btn, function() {
+        showCat(btn.dataset.cat, btn);
+      });
+    });
+
+    // iOS scroll fix
+    var nav = document.querySelector('.days-nav');
+    if (nav) {
+      nav.style.webkitOverflowScrolling = 'touch';
+      nav.style.overflowX = 'scroll';
+    }
+
+    // Generator filter buttons
+    document.querySelectorAll('.gen-filter').forEach(function(btn) {
+      bindTap(btn, function() {
+        setFilter(btn, btn.dataset.filter);
+      });
+    });
+
+    // Generator roll button
+    var rollBtn = document.querySelector('.gen-roll-btn');
+    if (rollBtn) {
+      bindTap(rollBtn, function() { rollActivity(); });
+    }
+
+    // Generator re-roll button
+    document.querySelectorAll('.gen-reroll').forEach(function(btn) {
+      bindTap(btn, function() { rollActivity(); });
+    });
+  });
+
+  // ========== GENERATOR ==========
+  var allActivities = [
+    // ACTIVE
+    {type:'active', label:'🏃 Активная', emoji:'🏃', title:'Захват флага', time:'30–40 мин', who:'2 команды', desc:'Два лагеря, у каждого флаг. Нужно пробраться на территорию соперника и схватить их флаг, не будучи осаленным. Осаленный — в «тюрьме», пока свои не освободят.', tip:'Дай 5 минут на тактику перед стартом. Подростки обожают планировать.'},
+    {type:'active', label:'🏃 Активная', emoji:'⚡', title:'Атомы и молекулы', time:'15–20 мин', who:'весь отряд', desc:'Все хаотично двигаются по площадке. Ведущий кричит число — нужно срочно сбиться в группы именно такого размера. Кто не успел — выбывает.', tip:'Для 13–16 лет: собираться только с теми, кого ещё не знаешь по имени.'},
+    {type:'active', label:'🏃 Активная', emoji:'🧟', title:'Зомби-апокалипсис', time:'20–30 мин', who:'весь отряд', desc:'Один зомби с повязкой. Осалил — передал повязку. Можно укрыться в «безопасных зонах» — не более 30 секунд. Цель людей — продержаться 15 минут.', tip:'Заранее объясни границы территории. Очень энергичная игра — ставь после обеда.'},
+    {type:'active', label:'🏃 Активная', emoji:'🏁', title:'Верёвочный курс', time:'35–45 мин', who:'команды', desc:'Командные испытания: пройти между натянутыми верёвками не касаясь, перенести «раненого» на носилках, построить мост из подручных материалов.', tip:'После каждого этапа — 2 минуты рефлексии: что сработало, что мешало?'},
+    {type:'active', label:'🏃 Активная', emoji:'🏴', title:'Стрелки', time:'30–40 мин', who:'2 команды', desc:'Одна команда убегает и оставляет стрелки (мелом, камнями, ветками). Вторая — ищет и догоняет. Если догнали до финиша — победила вторая команда.', tip:'Дай первой команде фору 5 минут. Ограничь территорию заранее.'},
+    {type:'active', label:'🏃 Активная', emoji:'♟', title:'Живые шахматы', time:'25–35 мин', who:'2 команды', desc:'Размечаешь поле 8×8 мелом. Дети — фигуры. Две команды-«игрока» отдают команды своим фигурам. Стандартные правила шахмат — вживую.', tip:'Для незнающих шахматы — упрощённая версия: только ферзи, ладьи и пешки.'},
+    {type:'active', label:'🏃 Активная', emoji:'🏅', title:'Спартакиада отряда', time:'40–50 мин', who:'весь отряд', desc:'Эстафеты: бег в мешках, перетягивание каната, прыжки в длину, метание мяча в цель. Всех наградить — за скорость, за смелость, за поддержку команды.', tip:'Награждай всех в конце — придумай смешные номинации для тех, кто не победил.'},
+
+    // CREATIVE
+    {type:'creative', label:'🎨 Творческая', emoji:'🎨', title:'Общая картина', time:'45–60 мин', who:'весь отряд', desc:'Ватман на полу, все рисуют вместе одну картину: «Наш идеальный лагерь», «Мы через 10 лет», «Лагерный зоопарк». Никаких правил — каждый добавляет своё.', tip:'Включи фоновую музыку. Медитативная активность — снимает напряжение после насыщенного дня.'},
+    {type:'creative', label:'🎨 Творческая', emoji:'✂️', title:'Мода из мусора', time:'25–30 мин', who:'2–3 команды', desc:'Команды получают пакеты, газеты, скотч, верёвки. Создать наряд и устроить мини-показ мод. Жюри оценивает оригинальность и уверенность на подиуме.', tip:'Хит у подростков. Все хотят сфотографироваться после показа.'},
+    {type:'creative', label:'🎨 Творческая', emoji:'🏗', title:'Башня из ничего', time:'15–20 мин', who:'2–4 команды', desc:'Каждой команде: 10 листов бумаги, скотч, 5 трубочек. Построить самую высокую стоячую башню за 12 минут. Измеряем линейкой.', tip:'Подростки относятся серьёзно — азарт включается сам. Дай ровно 12 минут.'},
+    {type:'creative', label:'🎨 Творческая', emoji:'🖼', title:'Битва художников', time:'20–25 мин', who:'весь отряд', desc:'Рисуем по команде вожатого (животное, эмоция, мечта, лагерь через 100 лет). Листы анонимно — угадывают автора, голосуют за лучшее.', tip:'«Не умею рисовать» — не отмазка. Кривые рисунки часто выигрывают.'},
+    {type:'creative', label:'🎨 Творческая', emoji:'📔', title:'Дневник смены', time:'ежедневно', who:'каждый', desc:'Каждый ведёт дневник — рисует, пишет, клеит стикеры. Вечером вожатый предлагает вопрос: «Что удивило?», «Кем восхищаешься?».', tip:'Дети уносят домой как главный сувенир. Отлично перед отбоем.'},
+
+    // INTEL
+    {type:'intel', label:'🧠 Интеллект', emoji:'🧠', title:'Что? Где? Когда?', time:'30–40 мин', who:'команды', desc:'Команды по 5–6 человек. 1 минута на обсуждение каждого вопроса. Вопросы на логику, не на знания. Вожатый — ведущий в образе «Господина Ведущего».', tip:'Вопросы с подвохом работают лучше: «Почему крышки люков круглые?», «Что общего у рыбы и пианино?»'},
+    {type:'intel', label:'🧠 Интеллект', emoji:'🗝', title:'Escape Room — бумажный', time:'30–40 мин', who:'команды', desc:'Команды получают конверт с уликами: шифры, ребусы, карты. Нужно решить финальный шифр раньше других. Всё на бумаге — никакого реквизита.', tip:'Шифры: буквы = цифры, зеркальный текст, карта с подсказками. Подростки обожают «раскрывать тайну».'},
+    {type:'intel', label:'🧠 Интеллект', emoji:'💬', title:'Дебаты', time:'25–30 мин', who:'вся группа', desc:'Провокационный тезис: «Соцсети делают нас одинокими», «Лагерь лучше, чем каникулы дома». Две стороны — за и против. По 3 аргумента каждая.', tip:'Роли раздаются случайно — защищаешь позицию, которая досталась. Развивает критическое мышление.'},
+    {type:'intel', label:'🧠 Интеллект', emoji:'🏆', title:'Своя игра', time:'20–25 мин', who:'3–4 команды', desc:'4 темы по 5 вопросов (100–500 очков). Темы: лагерь, кино, музыка, спорт. Первый хлопнул в ладоши — отвечает. Вожатый — ведущий.', tip:'Подготовь 20 вопросов заранее и держи в телефоне — сыграешь в любой момент.'},
+    {type:'intel', label:'🧠 Интеллект', emoji:'🌡', title:'Шкала мнений', time:'15–20 мин', who:'вся группа', desc:'Называешь утверждение: «Оценки важны», «Лагерь меняет людей». Все встают на воображаемой линии от «согласен» до «нет». Обсуждаем почему.', tip:'Все позиции уважаются. Развивает умение аргументировать свою точку зрения.'},
+    {type:'intel', label:'🧠 Интеллект', emoji:'🏝', title:'Необитаемый остров', time:'20–25 мин', who:'команды', desc:'Команде дан список 20 предметов — можно взять только 7. Нужно договориться за 7 минут. Потом объясняют свой выбор.', tip:'Отлично выявляет лидеров и тех, кому сложно в командной работе.'},
+
+    // SCENE
+    {type:'scene', label:'🎭 Сценка', emoji:'⚖', title:'Суд над телефоном', time:'15–20 мин', who:'3–6 чел', desc:'Роли: обвинитель, адвокат, судья, свидетели — соцсети, игры, камера. Телефон обвиняется в «краже времени». Каждый защищает или атакует.', tip:'Подростки включаются мгновенно — тема прямо про них. После — живая дискуссия.'},
+    {type:'scene', label:'🎭 Сценка', emoji:'🤖', title:'Собеседование в будущем', time:'10–15 мин', who:'4–5 чел', desc:'2086 год. Один — работодатель-робот, остальные — кандидаты на должность «Хранитель памяти» или «Специалист по снам». Убеди взять именно тебя.', tip:'Чистая импровизация — реквизит не нужен. Развивает уверенность в себе.'},
+    {type:'scene', label:'🎭 Сценка', emoji:'🎬', title:'Немое кино', time:'20–25 мин', who:'весь отряд', desc:'Команды получают ситуацию и разыгрывают её без слов — только мимика и жесты. Зрители угадывают сюжет.', tip:'Снимай на телефон — потом все захотят посмотреть на себя.'},
+    {type:'scene', label:'🎭 Сценка', emoji:'🎙', title:'Дублёры', time:'15–20 мин', who:'4 чел', desc:'Двое молча разыгрывают сцену, двое других сзади озвучивают вслух — придумывают диалог на ходу. Результат всегда абсурдный.', tip:'Никакого реквизита. Работает в любом помещении, отлично для тихого вечера.'},
+    {type:'scene', label:'🎭 Сценка', emoji:'📖', title:'Сказка по-новому', time:'25–30 мин', who:'2–3 команды', desc:'Берём сказку (Золушка, Колобок, Репка) и переносим в наше время: Золушка — блогер, Колобок — стартапер, Репка — корпоративный тимбилдинг.', tip:'10 минут на подготовку — и смешные абсурдные сценки гарантированы.'},
+    {type:'scene', label:'🎭 Сценка', emoji:'🎪', title:'Реклама невозможного', time:'25–30 мин', who:'2–3 команды', desc:'Команда получает бессмысленный предмет (сломанная ручка, пустая коробка) и за 10 минут придумывает рекламный ролик — лучший товар года.', tip:'Голосование поднятием руки. Развивает креативность и уверенность.'},
+
+    // CALM
+    {type:'calm', label:'🌙 Спокойная', emoji:'🌌', title:'Разговор под небом', time:'30–40 мин', who:'малая группа', desc:'Выходим вечером на улицу, ложимся на траву и говорим: о мечтах, страхах, о чём думают когда не могут уснуть. Вожатый задаёт вопросы и не торопит.', tip:'Самые важные разговоры — без плана и времени. Просто будь рядом.'},
+    {type:'calm', label:'🌙 Спокойная', emoji:'📚', title:'Живая библиотека', time:'20–30 мин', who:'в кругу', desc:'Каждый — «книга» с темой (хобби, история, место). Остальные «берут книгу» — подходят и слушают 5 минут один на один.', tip:'Открывает неожиданные таланты. Работает с 13 лет отлично.'},
+    {type:'calm', label:'🌙 Спокойная', emoji:'✍', title:'Стена желаний', time:'15–20 мин', who:'везде', desc:'Большой лист — дети пишут анонимно мечты и вопросы к миру. Вожатый вечером читает вслух и отвечает на те, что можно.', tip:'Даёт голос тем, кто молчит вслух. Часто выходят неожиданно глубокие вещи.'},
+    {type:'calm', label:'🌙 Спокойная', emoji:'💌', title:'Добрые слова', time:'20–25 мин', who:'весь отряд', desc:'Каждый пишет записку каждому в отряде — 1 доброе слово или комплимент. Записки складываются в конверты и раздаются потом.', tip:'Проследи за содержанием — анонимные могут содержать обидное. Объяви правило добра заранее.'},
+    {type:'calm', label:'🌙 Спокойная', emoji:'🎵', title:'Музыкальная гостиная', time:'30–40 мин', who:'по желанию', desc:'Кто хочет — показывает талант: поёт, играет, читает стих или рэп. Атмосфера кафе: слушают без оценок, только аплодисменты.', tip:'Не объявляй заранее — начни сам(а) с чего-то короткого, остальные подтянутся.'},
+    {type:'calm', label:'🌙 Спокойная', emoji:'🕯', title:'Вечерняя свечка', time:'15–20 мин', who:'в кругу', desc:'Финальный круг дня. Каждый завершает фразу: «Сегодня меня удивило...», «Я благодарен(на)...», «Завтра хочу...». Свеча передаётся по кругу.', tip:'Без гаджетов. Это самый важный ритуал смены — береги его атмосферу.'},
+
+    // FAST
+    {type:'fast', label:'⚡ Быстрая', emoji:'👆', title:'Пальцы', time:'5 мин', who:'весь отряд', desc:'Все одновременно показывают 1–5 пальцев. Чья сумма совпадёт с числом, которое угадал ведущий — выбывает.', tip:'Идеально пока ждёте автобус, стоите в очереди или нужно занять 5 минут.'},
+    {type:'fast', label:'⚡ Быстрая', emoji:'🔢', title:'33', time:'7–10 мин', who:'в кругу', desc:'Считаем по кругу. Вместо чисел кратных 3 и содержащих цифру 3 — хлопок в ладоши. Ошибся — выбываешь.', tip:'Сначала объясни медленно, потом темп нарастает сам.'},
+    {type:'fast', label:'⚡ Быстрая', emoji:'🤫', title:'Статуя', time:'5–7 мин', who:'весь отряд', desc:'Музыка — все двигаются как хотят. Стоп — все замирают. Кто шевельнулся — выбывает. Последний — победитель.', tip:'Включи неожиданную музыку — дети смеются от своих поз при замерзании.'},
+    {type:'fast', label:'⚡ Быстрая', emoji:'✊', title:'Эволюция', time:'7–10 мин', who:'весь отряд', desc:'Все начинают «яйцом» (приседают). Победил в камень-ножницы-бумагу → эволюционируешь: яйцо → цыплёнок → человек → суперчеловек.', tip:'Очень шумная и весёлая. Суперчеловеки помогают «яйцам» войти в игру.'},
+    {type:'fast', label:'⚡ Быстрая', emoji:'🎯', title:'Поймай взгляд', time:'5 мин', who:'в кругу', desc:'Все стоят в кругу, смотрят вниз. По команде поднимают глаза. Если встретились взглядом — оба выбывают. Цель — остаться последним.', tip:'Абсолютно молчаливая игра. Отлично после громкой активности.'},
+    {type:'fast', label:'⚡ Быстрая', emoji:'🧩', title:'Ассоциации', time:'5–8 мин', who:'в кругу', desc:'Говорим по кругу ассоциации без остановок — каждый к предыдущему слову. Завис дольше 3 секунд — выбываешь.', tip:'Темп нарастает — под конец очень смешно.'},
+  ];
+
+  var currentFilter = 'all';
+
+  function setFilter(btn, filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.gen-filter').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+  }
+
+  var lastIndex = -1;
+
+  function rollActivity() {
+    var pool = allActivities.filter(function(a) {
+      return currentFilter === 'all' || a.type === currentFilter;
+    });
+    if (!pool.length) return;
+
+    var idx;
+    do { idx = Math.floor(Math.random() * pool.length); }
+    while (pool.length > 1 && idx === lastIndex);
+    lastIndex = idx;
+
+    var a = pool[idx];
+
+    // Color by type
+    var colors = {active:'#FF6B6B', creative:'#6BCB77', intel:'#4ECDC4', scene:'#C77DFF', calm:'#1a1a2e', fast:'#FFD93D'};
+    var color = colors[a.type] || '#FF6B6B';
+
+    document.getElementById('gen-type').textContent = a.label;
+    document.getElementById('gen-emoji').textContent = a.emoji;
+    document.getElementById('gen-title').textContent = a.title;
+    document.getElementById('gen-desc').textContent = a.desc;
+    document.getElementById('gen-tip').textContent = a.tip;
+
+    var meta = document.getElementById('gen-meta');
+    meta.innerHTML = '<span class="gen-meta-pill">⏱ ' + a.time + '</span><span class="gen-meta-pill">👥 ' + a.who + '</span>';
+
+    var result = document.getElementById('gen-result');
+    result.style.borderTopColor = color;
+    result.classList.remove('visible');
+    void result.offsetWidth; // reflow for animation
+    result.classList.add('visible');
+
+    result.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  }
+
+
+
+</script>
+</body>
+</html>
